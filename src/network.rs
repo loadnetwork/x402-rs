@@ -45,6 +45,9 @@ pub enum Network {
     /// Polygon mainnet (chain ID 137).
     #[serde(rename = "polygon")]
     Polygon,
+    /// Load Alphanet (chain ID 9496).
+    #[serde(rename = "load-alphanet")]
+    LoadAlphanet,
 }
 
 impl Display for Network {
@@ -59,6 +62,7 @@ impl Display for Network {
             Network::SolanaDevnet => write!(f, "solana-devnet"),
             Network::PolygonAmoy => write!(f, "polygon-amoy"),
             Network::Polygon => write!(f, "polygon"),
+            Network::LoadAlphanet => write!(f, "load-alphanet"),
         }
     }
 }
@@ -81,6 +85,7 @@ impl From<Network> for NetworkFamily {
             Network::SolanaDevnet => NetworkFamily::Solana,
             Network::PolygonAmoy => NetworkFamily::Evm,
             Network::Polygon => NetworkFamily::Evm,
+            Network::LoadAlphanet => NetworkFamily::Evm,
         }
     }
 }
@@ -98,6 +103,7 @@ impl Network {
             Network::SolanaDevnet,
             Network::PolygonAmoy,
             Network::Polygon,
+            Network::LoadAlphanet,
         ]
     }
 }
@@ -235,6 +241,20 @@ static USDC_POLYGON: Lazy<USDCDeployment> = Lazy::new(|| {
     })
 });
 
+static USDC_LOAD_ALPHANET: Lazy<USDCDeployment> = Lazy::new(|| {
+    USDCDeployment(TokenDeployment {
+        asset: TokenAsset {
+            address: address!("0x3DC041E40AD9a73a947a1C801a4fC8DB4c95675F").into(),
+            network: Network::LoadAlphanet,
+        },
+        decimals: 6,
+        eip712: Some(TokenDeploymentEip712 {
+            name: "USD Coin".into(),
+            version: "2".into(),
+        }),
+    })
+});
+
 /// A known USDC deployment as a wrapper around [`TokenDeployment`].
 #[derive(Clone, Debug)]
 pub struct USDCDeployment(pub TokenDeployment);
@@ -280,6 +300,7 @@ impl USDCDeployment {
             Network::SolanaDevnet => &USDC_SOLANA_DEVNET,
             Network::PolygonAmoy => &USDC_POLYGON_AMOY,
             Network::Polygon => &USDC_POLYGON,
+            Network::LoadAlphanet => &USDC_LOAD_ALPHANET,
         }
     }
 }

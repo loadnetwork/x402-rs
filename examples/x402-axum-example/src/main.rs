@@ -25,13 +25,9 @@ async fn main() {
     let facilitator_url =
         env::var("FACILITATOR_URL").unwrap_or_else(|_| "https://facilitator.x402.rs".to_string());
 
-    let x402 = X402Middleware::try_from(facilitator_url)
-        .unwrap()
-        .with_base_url(url::Url::parse("https://localhost:3000/").unwrap());
-    let usdc_base_sepolia = USDCDeployment::by_network(Network::BaseSepolia)
-        .pay_to(address_evm!("0xBAc675C310721717Cd4A37F6cbeA1F081b1C2a07"));
-    let usdc_solana = USDCDeployment::by_network(Network::Solana)
-        .pay_to(address_sol!("EGBQqKn968sVv5cQh5Cr72pSTHfxsuzq7o7asqYB5uEV"));
+    let x402 = X402Middleware::try_from(facilitator_url).unwrap();
+    let usdc_load = USDCDeployment::by_network(Network::LoadAlphanet)
+        .pay_to(address_evm!("0x197f818c1313DC58b32D88078ecdfB40EA822614"));
 
     let app = Router::new()
         .route(
@@ -39,8 +35,7 @@ async fn main() {
             get(my_handler).layer(
                 x402.with_description("Premium API")
                     .with_mime_type("application/json")
-                    .with_price_tag(usdc_solana.amount(0.0025).unwrap())
-                    .or_price_tag(usdc_base_sepolia.amount(0.0025).unwrap()),
+                    .with_price_tag(usdc_load.amount(0.01).unwrap()),
             ),
         )
         .layer(
