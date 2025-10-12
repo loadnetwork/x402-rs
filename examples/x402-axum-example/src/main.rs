@@ -23,10 +23,10 @@ async fn main() {
         .register();
 
     let facilitator_url =
-        env::var("FACILITATOR_URL").unwrap_or_else(|_| "https://facilitator.x402.rs".to_string());
+        env::var("FACILITATOR_URL").unwrap_or_else(|_| "http://0.0.0.0:8081".to_string());
 
     let x402 = X402Middleware::try_from(facilitator_url).unwrap();
-    let usdc_load = USDCDeployment::by_network(Network::LoadAlphanet)
+    let usdc_polygon_amoy = USDCDeployment::by_network(Network::PolygonAmoy)
         .pay_to(address_evm!("0x197f818c1313DC58b32D88078ecdfB40EA822614"));
 
     let app = Router::new()
@@ -35,7 +35,7 @@ async fn main() {
             get(my_handler).layer(
                 x402.with_description("Premium API")
                     .with_mime_type("application/json")
-                    .with_price_tag(usdc_load.amount(0.01).unwrap()),
+                    .with_price_tag(usdc_polygon_amoy.amount(0.01).unwrap()),
             ),
         )
         .layer(
