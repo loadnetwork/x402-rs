@@ -5,6 +5,7 @@ use axum::routing::get;
 use dotenvy::dotenv;
 use opentelemetry::trace::Status;
 use std::env;
+use std::str::FromStr;
 use tower_http::trace::TraceLayer;
 use tracing::instrument;
 use tracing_opentelemetry::OpenTelemetrySpanExt;
@@ -12,6 +13,8 @@ use x402_axum::{IntoPriceTag, X402Middleware};
 use x402_rs::network::{Network, USDCDeployment};
 use x402_rs::telemetry::Telemetry;
 use x402_rs::{address_evm, address_sol};
+use url::Url;
+
 
 #[tokio::main]
 async fn main() {
@@ -22,10 +25,9 @@ async fn main() {
         .with_version(env!("CARGO_PKG_VERSION"))
         .register();
 
-    let facilitator_url =
-        env::var("FACILITATOR_URL").unwrap_or_else(|_| "http://0.0.0.0:8081".to_string());
+    let facilitator_url = "https://x402.load.network".to_string();
 
-    let x402 = X402Middleware::try_from(facilitator_url).unwrap();
+    let x402 = X402Middleware::try_from(facilitator_url.clone()).unwrap().with_base_url(Url::parse(&facilitator_url).unwrap());
     let usdc_polygon_amoy = USDCDeployment::by_network(Network::PolygonAmoy)
         .pay_to(address_evm!("0x197f818c1313DC58b32D88078ecdfB40EA822614"));
 
@@ -35,7 +37,7 @@ async fn main() {
             get(my_handler).layer(
                 x402.with_description("Premium API")
                     .with_mime_type("application/json")
-                    .with_price_tag(usdc_polygon_amoy.amount(0.01).unwrap()),
+                    .with_price_tag(usdc_polygon_amoy.amount(0.01).unwrap())
             ),
         )
         .layer(
@@ -88,7 +90,7 @@ async fn main() {
 
     tracing::info!("Using facilitator on {}", x402.facilitator_url());
 
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:3000")
+    let listener = tokio::net::TcpListener::bind("0.0.0.0:3001")
         .await
         .expect("Can not start server");
     tracing::info!("Listening on {}", listener.local_addr().unwrap());
