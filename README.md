@@ -7,7 +7,7 @@
 
 > A Rust-based implementation of the x402 protocol.
 
-> Deployment: A dedicated `x402-rs` instance with Load Network Alphanet configuration is deployed under [x402.load.network](https://x402.load.network)
+> Deployment: A dedicated `x402-rs` instance with Polygon Amoy configuration is deployed under [x402.load.network](https://x402.load.network)
 > check https://x402.load.network/supported
 
 This repository provides:
