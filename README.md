@@ -120,6 +120,7 @@ HOST=0.0.0.0
 PORT=8080
 RPC_URL_BASE_SEPOLIA=https://sepolia.base.org
 RPC_URL_BASE=https://mainnet.base.org
+RPC_URL_LOAD_ALPHANET=https://alphanet.load.network
 SIGNER_TYPE=private-key
 EVM_PRIVATE_KEY=0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef
 SOLANA_PRIVATE_KEY=6ASf5EcmmEHTgDJ4X4ZT5vT6iHVJBXPg5AN5YoTCpGWt
